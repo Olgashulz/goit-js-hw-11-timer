@@ -42,20 +42,19 @@ class CountdownTimer {
         //console.log(`${days}:${hours}:${mins}:${secs}`);
         
         this.onTick(days, hours, mins, secs);
-    }    
-}
-
-function updateTimerface (days, hours, mins, secs) {
+    }
+    
+    updateTimerface({ days, hours, mins, secs }) {
     refs.secsEl.textContent = secs < 10 ? `0${secs}` : secs;
     refs.minsEl.textContent = mins < 10 ? `0${mins}` : mins;
     refs.hoursEl.textContent = hours < 10 ? `0${hours}` : hours;
     refs.dateEl.textContent = days < 10 ? `0${days}` : days;
 }
+}
 
 const timer1 = new CountdownTimer({
     selector: '#timer-1',
     targetDate: new Date('Aug 17, 2021'),
-    onTick: updateTimerface,
 });
 
 document.addEventListener('DOMContentLoaded', timer1.calculateTime.bind(timer1));
