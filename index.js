@@ -1,19 +1,14 @@
-const refs = {
-    dateEl: document.querySelector('[data-value="days"]'),
-    hoursEl: document.querySelector('[data-value="hours"]'),
-    minsEl: document.querySelector('[data-value="mins"]'),
-    secsEl: document.querySelector('[data-value="secs"]')
-}
-
-
-
 class CountdownTimer {
     constructor({ onTick, selector, targetDate }) {
         this.targetDate = new Date('Aug 16, 2021');
         this.time = null;
-        this.onTick = onTick;
         this.selector = selector;
         this.targetDate = targetDate;
+
+        this.dateEl = document.querySelector('[data-value="days"]');
+        this.hoursEl = document.querySelector('[data-value="hours"]');
+        this.minsEl = document.querySelector('[data-value="mins"]');
+        this.secsEl = document.querySelector('[data-value="secs"]');
 
         this.pageLoaded();
     }
@@ -23,50 +18,60 @@ class CountdownTimer {
      }
 
     pageLoaded() {
-        this.getTimeNow();
-        this.getTimeComponent(this.time);
+        if (this.getTimeNow() > 0) {
+            this.getTimeComponent(this.time);
+            this.calculateTime();
+        }
+        else {
+            this.stopTimer(this.time);
+        }
+                
     }
 
     calculateTime() {
-        setInterval(() => {
+            setInterval(() => {
             this.getTimeNow();
             this.getTimeComponent(this.time)
         }, 1000);
     }
 
     getTimeComponent(time) {
-    const days = Math.floor(time / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const mins = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-    const secs = Math.floor((time % (1000 * 60)) / 1000);
-        //console.log(`${days}:${hours}:${mins}:${secs}`);
+        const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
+        const hours = this.pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),);
+        const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+        const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
+        console.log(`${days}:${hours}:${mins}:${secs}`);
         
-        this.onTick(days, hours, mins, secs);
+        this.updateTimerFace({ days, hours, mins, secs })
     }
     
-    updateTimerface({ days, hours, mins, secs }) {
-    refs.secsEl.textContent = secs < 10 ? `0${secs}` : secs;
-    refs.minsEl.textContent = mins < 10 ? `0${mins}` : mins;
-    refs.hoursEl.textContent = hours < 10 ? `0${hours}` : hours;
-    refs.dateEl.textContent = days < 10 ? `0${days}` : days;
-}
+    updateTimerFace({ days, hours, mins, secs }) {
+    this.secsEl.textContent = secs;
+    this.minsEl.textContent = mins;
+    this.hoursEl.textContent = hours;
+    this.dateEl.textContent = days;
+    }
+    
+    pad(value) {
+        return String(value).padStart(2, '0');
+    }
+
+    stopTimer() {
+        clearInterval(this.time);
+        this.getTimeComponent(0);
+    };
 }
 
 const timer1 = new CountdownTimer({
     selector: '#timer-1',
-    targetDate: new Date('Aug 17, 2021'),
+    targetDate: new Date('Aug 13, 2021'),
 });
 
-document.addEventListener('DOMContentLoaded', timer1.calculateTime.bind(timer1));
-
-
-
-//console.log(timer1.calculateTime());
 
 // const timer2 = new CountdownTimer({
 //     selector: '#timer-2',
 //     targetDate: new Date('Aug 8, 2021'),
-//     onTick: updateTimerface,
+//     onTick: updateTimerFace,
 // });
 //console.log(timer2.calculateTime());
 
